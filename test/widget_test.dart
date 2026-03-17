@@ -4,22 +4,29 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:travel_app/main.dart';
 
 void main() {
-  testWidgets('App shell renders correctly', (WidgetTester tester) async {
-    // Build the app and trigger a frame.
+  testWidgets('Dashboard renders correctly', (WidgetTester tester) async {
     await tester.pumpWidget(const TravelApp());
-
-    // Verify the AppBar title is present.
-    expect(find.text('Weather & Travel'), findsOneWidget);
-
-    // Verify the welcome text is present.
-    expect(find.text('Welcome to Weather & Travel App!'), findsOneWidget);
-
-    // Verify the FloatingActionButton is present.
+// Verify welcome text 
+    expect(find.text('Welcome Back!'), findsOneWidget);
+        expect(find.text('Check the weather in your saved cities.'), findsOneWidget);
+// Verify current weather row 
+    expect(find.text('28°C — Sunny'), findsOneWidget);
+    expect(find.text('Nairobi, Kenya'), findsOneWidget);
+// Verify saved cities header 
+    expect(find.text('Saved Cities'), findsOneWidget);
+    expect(find.text('6 cities'), findsOneWidget);
+// Verify city tiles are present 
+    expect(find.text('Paris'), findsOneWidget);
+    expect(find.text('Tokyo'), findsOneWidget);
+// Verify FAB exists 
     expect(find.byType(FloatingActionButton), findsOneWidget);
-
-    // Verify the AppBar action icons are present.
-    expect(find.byIcon(Icons.search), findsOneWidget);
-    expect(find.byIcon(Icons.settings), findsOneWidget);
-    expect(find.byIcon(Icons.travel_explore), findsOneWidget);
+  });
+  testWidgets('FAB adds a city', (WidgetTester tester) async {
+    await tester.pumpWidget(const TravelApp());
+// Tap the FAB 
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pump();
+// Verify count updated 
+    expect(find.text('7 cities'), findsOneWidget);
   });
 }
