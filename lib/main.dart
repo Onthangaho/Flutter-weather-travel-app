@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'city_tile.dart';
+import 'forecast_screen.dart';
+
 void main() {
   runApp(const TravelApp());
 }
@@ -39,9 +41,19 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Weather & Travel'),
         leading: const Icon(Icons.travel_explore),
         actions: [
+          // Repurposing the search button to navigate to forecast screen
           IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {},
+            icon: const Icon(Icons.calendar_today),
+            onPressed: () {
+              // Navigator.push adds a new screen on top of the current one
+              // MaterialPageRoute handles the slide-in animation
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ForecastScreen(),
+                ),
+              );
+            },
           ),
           Stack(
             children: [
