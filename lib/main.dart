@@ -1,30 +1,35 @@
 import 'package:flutter/material.dart';
 import 'city_tile.dart';
 import 'forecast_screen.dart';
+import 'city_detail_screen.dart';
+import 'app_router.dart';
 
 void main() {
-  runApp(const TravelApp());
+runApp(const TravelApp());
 }
 class TravelApp extends StatelessWidget {
-  const TravelApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Weather & Travel',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-        useMaterial3: true,
-      ),
-      home: const HomeScreen(),
-    );
-  }
+const TravelApp({super.key});
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Weather & Travel',
+debugShowCheckedModeBanner: false,
+theme: ThemeData(
+colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+useMaterial3: true,
+),
+home: const HomeScreen(),
+);
 }
+}
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+State<HomeScreen> createState() => _HomeScreenState();
 }
+
 class _HomeScreenState extends State<HomeScreen> {
   final List<Map<String, String>> savedCities = [
     {'name': 'Paris', 'country': 'France', 'temp': '18°C', 'condition': 'Cloudy'},
@@ -34,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     {'name': 'Dubai', 'country': 'UAE', 'temp': '38°C', 'condition': 'Clear'},
     {'name': 'London', 'country': 'UK', 'temp': '12°C', 'condition': 'Foggy'},
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,18 +47,10 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Weather & Travel'),
         leading: const Icon(Icons.travel_explore),
         actions: [
-          // Repurposing the search button to navigate to forecast screen
           IconButton(
             icon: const Icon(Icons.calendar_today),
             onPressed: () {
-              // Navigator.push adds a new screen on top of the current one
-              // MaterialPageRoute handles the slide-in animation
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ForecastScreen(),
-                ),
-              );
+              Navigator.of(context).pushRoute(AppRoute.forecast);
             },
           ),
           Stack(
@@ -88,20 +86,19 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Welcome Back!          ',
+              'Welcome Back!',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 4),
             Text(
               'Check the weather in your saved cities.',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
             ),
             const SizedBox(height: 24),
-
             Row(
               children: [
                 Icon(
@@ -116,40 +113,38 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       '28°C — Sunny',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     Text(
                       'Nairobi, Kenya',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
               ],
             ),
             const SizedBox(height: 24),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Saved Cities',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 Text(
                   '${savedCities.length} cities',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
@@ -177,6 +172,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         country: city['country']!,
                         temperature: city['temp']!,
                         condition: city['condition']!,
+                        onTap: () {
+                          Navigator.of(context).pushRouteWithArgs(
+                            AppRoute.cityDetail,
+                            CityDetailArgs(
+                              cityName: city['name']!,
+                              country: city['country']!,
+                              temperature: city['temp']!,
+                              condition: city['condition']!,
+                            ),
+                          );
+                        },
                       );
                     },
                   );
