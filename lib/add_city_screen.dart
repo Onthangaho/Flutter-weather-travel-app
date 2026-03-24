@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'travel_provider.dart';
+
 
 class AddCityScreen extends StatefulWidget {
   const AddCityScreen({super.key});
@@ -150,9 +153,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        // Trigger validation on ALL fields inside the Form
                         if (_formKey.currentState!.validate()) {
-                          // All fields valid — build the city map
                           final newCity = {
                             'name': _cityNameController.text.trim(),
                             'country': _countryController.text.trim(),
@@ -160,8 +161,23 @@ class _AddCityScreenState extends State<AddCityScreen> {
                             'condition': _selectedCondition,
                           };
 
-                          // Go back to dashboard and send the data
-                          Navigator.pop(context, newCity);
+                          // ============================================
+                          // BEFORE: Navigator.pop(context, newCity);
+                          // The form had to throw data back to the dashboard.
+                          //
+                          // AFTER: Write directly to the Provider.
+                          // ============================================
+                          // context.read<TravelProvider>() grabs the provider
+                          // WITHOUT subscribing to it (no rebuild needed here).
+                          // We use 'read' not 'watch' because we are inside
+                          // a callback — we want to DO something, not display.
+                          context.read<TravelProvider>().addCity(newCity);
+
+                          // Go back to the dashboard — no data attached!
+                          Navigator.pop(context);
+
+                          // The dashboard auto-updates because it's watching
+                          // the Provider via context.watch<TravelProvider>()
                         }
                       },
                       icon: const Icon(Icons.add),
