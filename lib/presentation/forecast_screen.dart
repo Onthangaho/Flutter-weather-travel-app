@@ -28,26 +28,26 @@ class ForecastScreen extends StatelessWidget {
             Text(
               'This Week',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 16),
             ...forecastData.map((day) => DailyForecastCard(
-              dayName: day['day'],
-              condition: day['condition'],
-              temperature: day['temp'],
-              weatherIcon: day['icon'],
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      '${day['day']}: ${day['condition']}, ${day['temp']}',
-                    ),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-              },
-            )),
+                  dayName: day['day'],
+                  condition: day['condition'],
+                  temperature: day['temp'],
+                  weatherIcon: day['icon'],
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '${day['day']}: ${day['condition']}, ${day['temp']}',
+                        ),
+                        duration: const Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                )),
           ],
         ),
       ),

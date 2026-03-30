@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+
 class CityDetailScreen extends StatelessWidget {
   final String cityName;
   final String country;
   final String temperature;
   final String condition;
+
   const CityDetailScreen({
     super.key,
     required this.cityName,
@@ -56,15 +58,15 @@ class CityDetailScreen extends StatelessWidget {
                   Text(
                     temperature,
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     condition,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                   ),
                 ],
               ),
@@ -73,15 +75,15 @@ class CityDetailScreen extends StatelessWidget {
             Text(
               cityName,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 4),
             Text(
               country,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
+                    color: colorScheme.onSurfaceVariant,
+                  ),
             ),
             const SizedBox(height: 24),
             Row(
@@ -89,7 +91,8 @@ class CityDetailScreen extends StatelessWidget {
               children: [
                 _buildDetailChip(context, Icons.water_drop, '65%', 'Humidity'),
                 _buildDetailChip(context, Icons.air, '12 km/h', 'Wind'),
-                _buildDetailChip(context, Icons.visibility, '10 km', 'Visibility'),
+                _buildDetailChip(
+                    context, Icons.visibility, '10 km', 'Visibility'),
               ],
             ),
           ],
@@ -107,8 +110,8 @@ class CityDetailScreen extends StatelessWidget {
         Text(
           value,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+                fontWeight: FontWeight.bold,
+              ),
         ),
         Text(
           label,

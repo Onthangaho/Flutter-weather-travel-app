@@ -76,9 +76,9 @@ class CityTile extends StatelessWidget {
                   Text(
                     temperature,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.primary,
+                        ),
                   ),
                 ],
               ),
@@ -89,8 +89,8 @@ class CityTile extends StatelessWidget {
                   Text(
                     cityName,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                          fontWeight: FontWeight.w600,
+                        ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -98,13 +98,13 @@ class CityTile extends StatelessWidget {
                   Text(
                     country,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                   ),
                   const SizedBox(height: 4),
                   Container(
                     padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(20),
@@ -112,8 +112,8 @@ class CityTile extends StatelessWidget {
                     child: Text(
                       condition,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: colorScheme.onPrimaryContainer,
-                      ),
+                            color: colorScheme.onPrimaryContainer,
+                          ),
                     ),
                   ),
                 ],

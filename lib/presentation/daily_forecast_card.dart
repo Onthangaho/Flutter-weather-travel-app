@@ -55,16 +55,17 @@ class DailyForecastCard extends StatelessWidget {
                   children: [
                     Text(
                       dayName,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style:
+                          Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       condition,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -76,9 +77,9 @@ class DailyForecastCard extends StatelessWidget {
                 Text(
                   temperature,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.primary,
-                  ),
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary,
+                      ),
                 ),
               ],
             ),
