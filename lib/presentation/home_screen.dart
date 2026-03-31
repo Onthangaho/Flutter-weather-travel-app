@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../domain/travel_provider.dart';
 import '../domain/settings_provider.dart';
+import '../domain/weather_provider.dart';
 import 'city_tile.dart';
 import 'add_city_screen.dart';
 import 'app_router.dart';
 import 'settings_screen.dart';
-import '../domain/weather_provider.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -17,28 +17,36 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
-
-
   void initState() {
     super.initState();
-// Fetch Nairobi weather on first load.
-// We use Future.microtask to safely call the provider
-// after the widget tree has finished building.
-// context.read does NOT subscribe — we just want to call
-// the method once, not rebuild on every change here.
+// Load default Nairobi weather on startup.
+// This does NOT trigger any permission popup — it's just
+// a regular API call with hardcoded coordinates.
     Future.microtask(() {
       context.read<WeatherProvider>().loadWeather(-1.2921, 36.8219);
     });
   }
+  @override
   Widget build(BuildContext context) {
     final travelProvider = context.watch<TravelProvider>();
     final settings = context.watch<SettingsProvider>();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Weather & Travel'),
         leading: const Icon(Icons.travel_explore),
         actions: [
+          // ============================================================
+          // NEW: The GPS location button — "Latest Possible Time"
+          // ============================================================
+          // The permission popup triggers ONLY when this button is tapped.
+          // The user knows exactly why we're asking.
+          IconButton(
+            icon: const Icon(Icons.my_location),
+            tooltip: 'Use my location',
+            onPressed: () {
+              context.read<WeatherProvider>().fetchLocalWeather();
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.calendar_today),
             onPressed: () {
@@ -66,17 +74,21 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               'Welcome Back!',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               'Check the weather in your saved cities.',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 24),
+
+            // ============================================================
+            // Weather display — now shows dynamic location name
+            // ============================================================
             Consumer<WeatherProvider>(
               builder: (context, weatherProvider, child) {
                 // --- LOADING STATE ---
@@ -103,19 +115,30 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Text(
                               weatherProvider.errorMessage!,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.error,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                color:
+                                Theme.of(context).colorScheme.error,
                               ),
                             ),
                             const SizedBox(height: 4),
                             GestureDetector(
                               onTap: () {
-                                weatherProvider.loadWeather(-1.2921, 36.8219);
+                                // Retry with the default coordinates
+                                weatherProvider.loadWeather(
+                                    -1.2921, 36.8219);
                               },
                               child: Text(
                                 'Tap to retry',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary,
                                   decoration: TextDecoration.underline,
                                 ),
                               ),
@@ -143,37 +166,44 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                       const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${displayTemp.toStringAsFixed(1)}$tempUnit — ${weather.condition}',
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${displayTemp.toStringAsFixed(1)}$tempUnit — ${weather.condition}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
-                          ),
-                          Text(
-                            'Nairobi, Kenya',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
+                            Text(
+                              // UPDATED: uses dynamic location name
+                              // instead of hardcoded "Nairobi, Kenya"
+                              weatherProvider.locationName,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   );
                 }
 
-                // --- DEFAULT / NO DATA STATE ---
+                // --- DEFAULT STATE ---
                 return Text(
                   'Tap to fetch weather',
                   style: Theme.of(context).textTheme.bodyLarge,
                 );
               },
             ),
-
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

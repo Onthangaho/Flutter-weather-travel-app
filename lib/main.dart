@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'data/settings_repository.dart';
 import 'data/travel_repository.dart';
 import 'data/weather_repository.dart';
+import 'data/location_service.dart';
 // Domain layer — providers
 import 'domain/settings_provider.dart';
 import 'domain/travel_provider.dart';
@@ -33,7 +34,7 @@ class TravelApp extends StatelessWidget {
         ),
         // NEW: WeatherProvider with dependency injection
         ChangeNotifierProvider(
-          create: (_) => WeatherProvider(WeatherRepository()),
+          create: (_) => WeatherProvider(WeatherRepository(), LocationService()),
         ),
       ],
       child: Consumer<SettingsProvider>(
