@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1094236636788",
+    "project_id": "travel-weather-app-bitcube",
+    "storage_bucket": "travel-weather-app-bitcube.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1094236636788:android:1fa7b8eee01473b7dbb321",
+        "android_client_info": {
+          "package_name": "com.example.travel_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDCKA_IOgKu71bQEkTs7VT6VxbJwZsbgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

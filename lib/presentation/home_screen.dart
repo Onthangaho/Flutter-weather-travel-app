@@ -7,6 +7,8 @@ import 'city_tile.dart';
 import 'add_city_screen.dart';
 import 'app_router.dart';
 import 'settings_screen.dart';
+import '../domain/auth_provider.dart';
+import '../data/notification_service.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -16,6 +18,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  final NotificationService _notificationService = NotificationService();
   @override
   void initState() {
     super.initState();
@@ -53,16 +57,62 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.of(context).pushRoute(AppRoute.forecast);
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
-                ),
-              );
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) {
+              if (value == 'settings') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ),
+                );
+              } else if (value == 'logout') {
+                // Show a confirmation dialog before logging out
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Sign Out?'),
+                    content: const Text('Are you sure you want to sign out?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          context.read<AuthProvider>().logout();
+                          // No navigation needed — AuthGate handles it
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.red,
+                        ),
+                        child: const Text('Sign Out'),
+                      ),
+                    ],
+                  ),
+                );
+              }
             },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'settings',
+                child: ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text('Settings'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'logout',
+                child: ListTile(
+                  leading: Icon(Icons.logout, color: Colors.red),
+                  title: Text('Sign Out', style: TextStyle(color: Colors.red)),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -71,13 +121,20 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Welcome Back!',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Consumer<AuthProvider>(
+              builder: (context, auth, child) {
+                return Text(
+                  auth.userEmail != null
+                      ? 'Welcome, ${auth.userEmail!.split('@')[0]}!'
+                      : 'Welcome Back!',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              },
             ),
-            const SizedBox(height: 4),
+
+      const SizedBox(height: 4),
             Text(
               'Check the weather in your saved cities.',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -151,6 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
 
                 // --- SUCCESS STATE ---
+                // --- SUCCESS STATE ---
                 if (weatherProvider.hasData) {
                   final weather = weatherProvider.currentWeather!;
                   final tempUnit = settings.isCelsius ? '°C' : '°F';
@@ -158,40 +216,60 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? weather.temperature
                       : (weather.temperature * 9 / 5) + 32;
 
-                  return Row(
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        _getWeatherIcon(weather.condition),
-                        size: 48,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${displayTemp.toStringAsFixed(1)}$tempUnit — ${weather.condition}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                      // The existing weather data row
+                      Row(
+                        children: [
+                          Icon(
+                            _getWeatherIcon(weather.condition),
+                            size: 48,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${displayTemp.toStringAsFixed(1)}$tempUnit — ${weather.condition}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  weatherProvider.locationName,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              // UPDATED: uses dynamic location name
-                              // instead of hardcoded "Nairobi, Kenya"
-                              weatherProvider.locationName,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          // NEW: Alert bell button
+                          IconButton(
+                            icon: const Icon(Icons.notification_important),
+                            tooltip: 'Test weather alert',
+                            color: Theme.of(context).colorScheme.error,
+                            onPressed: () {
+                              _notificationService.showWeatherAlert(
+                                title: 'Weather Alert!',
+                                body:
+                                '${weather.condition} conditions reported. '
+                                    'Current temperature: '
+                                    '${displayTemp.toStringAsFixed(1)}$tempUnit.',
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   );

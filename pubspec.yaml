@@ -38,7 +38,9 @@ dependencies:
   shared_preferences: ^2.5.3
   dio: ^5.8.0+1
   geolocator: ^13.0.2
-
+  firebase_core: ^3.13.0 #For Firebase initialization
+  firebase_auth: ^5.5.2 #Email/Password authentication
+  flutter_local_notifications: ^19.0.1
 
 dev_dependencies:
   flutter_test:
